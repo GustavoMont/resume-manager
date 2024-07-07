@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "next dev"
+    "dev": "next dev",
+    "lint:style:check": "prettier --check .",
+    "lint:style:fix": "prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,7 @@
     "@types/node": "20.14.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "prettier": "^3.3.2",
     "typescript": "5.4.5"
   }
 }
