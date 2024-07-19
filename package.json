@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next dev",
     "lint:style:check": "prettier --check .",
-    "lint:style:fix": "prettier --write ."
+    "lint:style:fix": "prettier --write .",
+    "services:up": "docker compose -f infra/compose.yaml up -d",
+    "services:down": "docker compose -f infra/compose.yaml down"
   },
   "keywords": [],
   "author": "",
