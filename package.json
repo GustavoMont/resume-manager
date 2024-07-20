@@ -9,6 +9,7 @@
     "lint:style:check": "prettier --check .",
     "lint:style:fix": "prettier --write .",
     "migrations:create": "drizzle-kit generate --config=infra/database/drizzle.config.ts",
+    "migrations:up": "tsx infra/database/migrate.ts",
     "services:up": "docker compose -f infra/compose.yaml up -d",
     "services:down": "docker compose -f infra/compose.yaml down"
   },
@@ -16,6 +17,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "drizzle-orm": "^0.32.0",
     "next": "^14.2.4",
     "pg": "^8.12.0",
@@ -29,6 +32,7 @@
     "@types/react-dom": "^18.3.0",
     "drizzle-kit": "^0.23.0",
     "prettier": "^3.3.2",
+    "tsx": "^4.16.2",
     "typescript": "5.4.5"
   }
 }
