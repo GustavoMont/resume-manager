@@ -22,7 +22,9 @@ async function getNewDb(client?: Client) {
   return db;
 }
 
-export default {
+const database = {
   getNewClient,
   getNewDb,
 };
+
+export default database;

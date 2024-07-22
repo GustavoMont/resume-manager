@@ -37,6 +37,8 @@ function createSpinner() {
   };
 }
 
-export default {
+const cliSpinner = {
   createSpinner,
 };
+
+export default cliSpinner;
