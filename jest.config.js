@@ -13,6 +13,8 @@ const createJestConfig = nextJest({
 const config = {
   preset: "ts-jest",
   moduleDirectories: ["node_modules", "<rootDir>"],
+  testTimeout: 60_000,
+  setupFilesAfterEnv: ["./setup-jest.ts"],
 };
 
 module.exports = createJestConfig(config);
