@@ -1,7 +1,6 @@
 import { migrate } from "drizzle-orm/node-postgres/migrator";
 import database from "./database";
 import { Client } from "pg";
-import { resolve } from "node:path";
 import drizzleConfig from "./drizzle.config";
 
 let client: Client;
