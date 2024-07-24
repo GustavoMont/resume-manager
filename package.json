@@ -4,7 +4,8 @@
   "description": "It's a project to easily manage resumé for different jobs",
   "main": "index.js",
   "scripts": {
-    "predev": "npm run services:up && npm run wait-for-db && npm run migrations:up",
+    "predev": "npm run services:up && npm run wait-for-db && npm run migrations:up && npm run db:seed",
+    "db:seed": "tsx infra/scripts/seeds.ts",
     "dev": "next dev",
     "lint:style:check": "prettier --check .",
     "lint:style:fix": "prettier --write .",
@@ -30,6 +31,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@types/async-retry": "^1.4.8",
     "@types/jest": "^29.5.12",
     "@types/node": "20.14.2",
