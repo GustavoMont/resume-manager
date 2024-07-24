@@ -1,5 +1,5 @@
 {
-  "id": "a40b0420-7fd6-4b9b-85bb-739673733b61",
+  "id": "f2ee9b9b-52f2-411a-9b6b-a4a9148174b7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -7,7 +7,20 @@
     "public.users": {
       "name": "users",
       "schema": "",
-      "columns": {},
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "full_name": {
+          "name": "full_name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
