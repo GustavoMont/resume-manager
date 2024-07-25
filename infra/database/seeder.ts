@@ -4,12 +4,13 @@ import { faker } from "@faker-js/faker";
 
 async function seedUser() {
   const db = await database.getNewDb();
-  const newUser = await db
-    .insert(users)
-    .values({
-      fullName: faker.person.fullName(),
-    })
-    .returning();
+  const user = {
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+  };
+  const newUser = await db.insert(users).values(user).returning();
 
   return newUser;
 }
