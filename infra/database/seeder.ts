@@ -1,9 +1,12 @@
+import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import database from "./database";
 import { users } from "./schema";
 import { faker } from "@faker-js/faker";
+import * as schema from "infra/database/schema";
 
-async function seedUser() {
-  const db = await database.getNewDb();
+type DatabaseInstance = NodePgDatabase<typeof schema>;
+
+async function seedUser(db: DatabaseInstance) {
   const user = {
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),
@@ -16,9 +19,12 @@ async function seedUser() {
 }
 
 async function seed() {
+  const client = await database.getNewClient();
+  const db = await database.getNewDb(client);
   for (let index = 0; index <= 5; index++) {
-    await seedUser();
+    await seedUser(db);
   }
+  await client.end();
 }
 
 const seeder = {
