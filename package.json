@@ -23,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.7.2",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
     "drizzle-orm": "^0.32.0",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@types/async-retry": "^1.4.8",
+    "@types/bcrypt": "^5.0.2",
     "@types/humps": "^2.0.6",
     "@types/jest": "^29.5.12",
     "@types/node": "20.14.2",
