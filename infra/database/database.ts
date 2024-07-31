@@ -1,6 +1,5 @@
-import "dotenv-expand/config";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { Client } from "pg";
+import { Pool } from "pg";
 import * as schema from "./schema";
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
@@ -10,38 +9,30 @@ import { migrate as runMigrations } from "drizzle-orm/node-postgres/migrator";
 
 dotenvExpand.expand(dotenv.config({ path: resolve(".", ".env.development") }));
 
-async function getNewClient() {
-  const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-  });
-  await client.connect();
-  return client;
-}
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
-async function getNewDb(client?: Client) {
-  client = client ?? (await getNewClient());
-  const db = drizzle(client, { schema });
+async function getNewDb() {
+  const db = drizzle(pool, { schema });
   return db;
 }
 
 async function migrate() {
-  const client = await database.getNewClient();
-  try {
-    const db = await database.getNewDb(client);
-    await runMigrations(db, {
-      migrationsFolder: drizzleConfig.out,
-    });
-    client.end();
-  } catch (error) {
-    client.end();
-    throw error;
-  }
+  const db = await database.getNewDb();
+  await runMigrations(db, {
+    migrationsFolder: drizzleConfig.out,
+  });
+}
+
+async function closePool() {
+  await pool.end();
 }
 
 const database = {
-  getNewClient,
   getNewDb,
   migrate,
+  closePool,
 };
 
 export default database;

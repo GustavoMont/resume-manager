@@ -19,12 +19,10 @@ async function seedUser(db: DatabaseInstance) {
 }
 
 async function seed() {
-  const client = await database.getNewClient();
-  const db = await database.getNewDb(client);
+  const db = await database.getNewDb();
   for (let index = 0; index <= 5; index++) {
     await seedUser(db);
   }
-  await client.end();
 }
 
 const seeder = {
