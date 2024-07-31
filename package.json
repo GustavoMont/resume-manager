@@ -14,7 +14,7 @@
     "migrations:up": "tsx infra/database/migrate.ts",
     "services:up": "docker compose -f infra/compose.yaml up -d",
     "services:down": "docker compose -f infra/compose.yaml down",
-    "test": "npm run services:up && concurrently \"next dev\" \"jest --runInBand --verbose --detectOpenHandles --forceExit\" -n next,jest --hide next -k -s command-jest",
+    "test": "npm run services:up && concurrently \"next dev\" \"jest --runInBand --verbose --detectOpenHandles\" -n next,jest --hide next -k -s command-jest",
     "test:watch": "jest --watchAll --runInBand --verbose",
     "wait-for-db": "tsx infra/scripts/wait-for-db.ts"
   },
