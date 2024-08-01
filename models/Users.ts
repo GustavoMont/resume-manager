@@ -3,6 +3,7 @@ import database from "infra/database/database";
 import { users } from "infra/database/schema";
 import { User } from "types/User";
 import Password from "./Password";
+import BadRequestException from "exceptions/BadRequestException";
 
 async function getAllUsers() {
   const db = await database.getNewDb();
@@ -27,10 +28,7 @@ async function getUserByEmail(email: string) {
 async function isNewUser(email: string) {
   const isUserSignedUp = await getUserByEmail(email);
   if (isUserSignedUp) {
-    throw {
-      message: "Usuário já cadastrado",
-      status: 400,
-    };
+    throw new BadRequestException("Usuário já cadastrado");
   }
 }
 

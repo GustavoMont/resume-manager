@@ -12,7 +12,7 @@ export default class CreateUserDto implements User {
   @MinLength(3, { message: "Sobrenome deve ter no mínimo 3 letras" })
   lastName: string;
   @IsStrongPassword(
-    { minLength: 8, minNumbers: 1 },
+    { minLength: 8, minNumbers: 1, minUppercase: 0, minSymbols: 0 },
     {
       message: "Senha deve conter no mínimo 8 caracteres, com números e letras",
     },
