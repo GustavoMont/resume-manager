@@ -1,7 +1,8 @@
 import { plainToInstance } from "class-transformer";
 import { validateOrReject } from "class-validator";
 import CreateUserDto from "dtos/users/CreateUser.dto";
-import { Camelized, camelizeKeys, decamelizeKeys } from "humps";
+import { Camelized, camelizeKeys } from "humps";
+import Authentication from "models/Authentication";
 import UserModel from "models/Users";
 import { NextApiRequest, NextApiResponse } from "next";
 import { User } from "types/User";
@@ -20,7 +21,8 @@ export default async function signup(
     await validateOrReject(createUserPayload);
 
     const newUser = await UserModel.createUser(createUserPayload);
-    return res.status(201).json(decamelizeKeys(newUser));
+    const accessResponse = Authentication.authenticateUser(newUser);
+    return res.status(201).json(accessResponse);
   } catch (error) {
     const status = exceptionHandler.handleStatusCode(error);
     const formatedException = exceptionHandler.handleException(error);
