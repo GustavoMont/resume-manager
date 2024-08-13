@@ -1,4 +1,5 @@
 export type User = {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -6,5 +7,3 @@ export type User = {
   createdAt: string;
   updatedAt: string;
 };
-
-export type UserResponseDto = Omit<User, "password">;
