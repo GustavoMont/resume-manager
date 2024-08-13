@@ -1,7 +1,7 @@
 import { Decamelized } from "humps";
-import { UserResponseDto } from "types/User";
 import requester from "utils/requester";
 import { randomUUID } from "node:crypto";
+import { UserResponseDto } from "dtos/users/UserResponse.dto";
 
 const api = requester.createTestRequester();
 
@@ -57,12 +57,14 @@ describe("success cases", () => {
     last_name: "Nome",
     password: randomUUID(),
   };
-  test("should return logged user", async () => {
-    const { status, data: user } = await api.post("/auth/signup", signupBody);
+  test("should return access token", async () => {
+    const { status, data: response } = await api.post(
+      "/auth/signup",
+      signupBody,
+    );
     expect(status).toBe(201);
-    expect(user.first_name).toBe(signupBody.first_name);
-    expect(user.last_name).toBe(signupBody.last_name);
-    expect(user.email).toBe(signupBody.email);
+    expect(response.access).toBeDefined();
+    expect(response.access.length).toBeGreaterThan(12);
   });
   test("should add new user", async () => {
     await api.post("/auth/signup", signupBody);
