@@ -4,13 +4,15 @@ import { users } from "infra/database/schema";
 import { User } from "types/User";
 import Password from "./Password";
 import BadRequestException from "exceptions/BadRequestException";
+import { plainToInstance } from "class-transformer";
+import { UserResponseDto } from "dtos/users/UserResponse.dto";
 
 async function getAllUsers() {
   const db = await database.getNewDb();
   const columns = getTableColumns(users);
-  delete columns.password;
   const result = await db.select(columns).from(users);
-  return result;
+
+  return plainToInstance(UserResponseDto, result);
 }
 
 async function hashUserPassword(user: User) {
@@ -41,6 +43,6 @@ async function createUser(newUser: User) {
   return user;
 }
 
-const UserModel = { getAllUsers, createUser };
+const UserModel = { getAllUsers, createUser, getUserByEmail };
 
 export default UserModel;
