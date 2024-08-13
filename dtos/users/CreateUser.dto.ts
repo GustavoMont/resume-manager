@@ -4,6 +4,8 @@ import { User } from "types/User";
 
 export default class CreateUserDto implements User {
   @Exclude()
+  id: number;
+  @Exclude()
   createdAt: string;
   @Exclude()
   updatedAt: string;
