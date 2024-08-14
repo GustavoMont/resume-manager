@@ -2,6 +2,7 @@ import { Decamelized } from "humps";
 import requester from "utils/requester";
 import { randomUUID } from "node:crypto";
 import { UserResponseDto } from "dtos/users/UserResponse.dto";
+import { faker } from "@faker-js/faker";
 
 const api = requester.createTestRequester();
 
@@ -14,7 +15,7 @@ describe("failure cases", () => {
       email: user1.email,
       first_name: "Primeiro",
       last_name: "Nome",
-      password: "1$uperSenha",
+      password: faker.internet.password(),
     };
     const { status, data: errors } = await api.post("/auth/signup", signupBody);
     expect(status).toBe(400);
@@ -29,7 +30,7 @@ describe("failure cases", () => {
       email: "email",
       first_name: "P",
       last_name: "N",
-      password: "top",
+      password: faker.internet.password({ length: 3 }),
     };
     const { status, data: errors } = await api.post("/auth/signup", signupBody);
     expect(status).toBe(400);

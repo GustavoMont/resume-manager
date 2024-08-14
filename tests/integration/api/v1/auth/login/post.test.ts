@@ -7,7 +7,7 @@ const api = requester.createTestRequester();
 test("should return 401 when email is wrong", async () => {
   const loginBody = {
     email: "email@email.com",
-    password: "password",
+    password: faker.internet.password(),
   };
   const { status } = await api.post("/auth/login", loginBody);
   expect(status).toBe(401);
@@ -19,7 +19,7 @@ test("should return 401 when password is wrong", async () => {
   } = await api.get<UserResponseDto[]>("/users");
   const loginBody = {
     email: user.email,
-    password: "password",
+    password: faker.internet.password(),
   };
   const { status } = await api.post("/auth/login", loginBody);
   expect(status).toBe(401);
