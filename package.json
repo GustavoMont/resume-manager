@@ -41,6 +41,8 @@
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.4.0",
+    "@commitlint/config-conventional": "^19.2.2",
     "@faker-js/faker": "^8.4.1",
     "@types/async-retry": "^1.4.8",
     "@types/bcrypt": "^5.0.2",
