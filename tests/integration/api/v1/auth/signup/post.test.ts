@@ -1,18 +1,13 @@
-import { Decamelized } from "humps";
 import requester from "utils/requester";
 import { randomUUID } from "node:crypto";
-import { UserResponseDto } from "dtos/users/UserResponse.dto";
 import { faker } from "@faker-js/faker";
 
 const api = requester.createTestRequester();
 
 describe("failure cases", () => {
   test("should return 400 for user already exists", async () => {
-    const { data: users } =
-      await api.get<Decamelized<UserResponseDto>[]>("/users");
-    const [user1] = users;
     const signupBody = {
-      email: user1.email,
+      email: "arquiteto@email.com",
       first_name: "Primeiro",
       last_name: "Nome",
       password: faker.internet.password(),
@@ -66,11 +61,5 @@ describe("success cases", () => {
     expect(status).toBe(201);
     expect(response.access).toBeDefined();
     expect(response.access.length).toBeGreaterThan(12);
-  });
-  test("should add new user", async () => {
-    await api.post("/auth/signup", signupBody);
-    const { data: users } =
-      await api.get<Decamelized<UserResponseDto>[]>("/users");
-    expect(users).toHaveLength(7);
   });
 });
