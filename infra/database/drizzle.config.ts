@@ -1,9 +1,9 @@
 import { defineConfig } from "drizzle-kit";
-import { resolve } from "node:path";
+import { join } from "node:path";
 
 export default defineConfig({
-  schema: resolve(".", "infra", "database", "schema.ts"),
-  out: resolve(".", "infra", "database", "migrations"),
+  schema: join("infra", "database", "schema.ts"),
+  out: join("infra", "database", "migrations"),
   dialect: "postgresql", // 'postgresql' | 'mysql' | 'sqlite'
   dbCredentials: {
     url: process.env.DATABASE_URL,
