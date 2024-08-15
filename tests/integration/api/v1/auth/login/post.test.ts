@@ -4,6 +4,17 @@ import requester from "utils/requester";
 
 const api = requester.createTestRequester();
 
+async function createUser() {
+  const signupBody = {
+    email: faker.internet.email(),
+    password: faker.internet.password(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+  };
+  await api.post<UserResponseDto>("/auth/signup", signupBody);
+  return signupBody;
+}
+
 test("should return 401 when email is wrong", async () => {
   const loginBody = {
     email: "email@email.com",
@@ -14,11 +25,9 @@ test("should return 401 when email is wrong", async () => {
 });
 
 test("should return 401 when password is wrong", async () => {
-  const {
-    data: [user],
-  } = await api.get<UserResponseDto[]>("/users");
+  const { email } = await createUser();
   const loginBody = {
-    email: user.email,
+    email,
     password: faker.internet.password(),
   };
   const { status } = await api.post("/auth/login", loginBody);
@@ -26,17 +35,8 @@ test("should return 401 when password is wrong", async () => {
 });
 
 test("should return 200 and access token", async () => {
-  const signupBody = {
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-  };
-  await api.post<UserResponseDto>("/auth/signup", signupBody);
-  const loginBody = {
-    email: signupBody.email,
-    password: signupBody.password,
-  };
+  const { email, password } = await createUser();
+  const loginBody = { email, password };
   const { status, data } = await api.post("/auth/login", loginBody);
 
   expect(status).toBe(200);
