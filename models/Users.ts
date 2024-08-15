@@ -27,12 +27,11 @@ async function getUserByEmail(email: string) {
   return user;
 }
 
-async function getUserById(id:number) {
+async function getUserById(id: number) {
   const db = await database.getNewDb();
   const [user] = await db.select().from(users).where(eq(users.id, id));
-  return user; 
+  return user;
 }
-
 
 async function isNewUser(email: string) {
   const isUserSignedUp = await getUserByEmail(email);
