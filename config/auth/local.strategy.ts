@@ -19,7 +19,7 @@ const authenticate: VerifyFunction = async (email, password, done) => {
     }
     return done(null, user);
   } catch (error) {
-    done(error);
+    return done(error);
   }
 };
 
