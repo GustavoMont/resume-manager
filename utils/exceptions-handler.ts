@@ -1,5 +1,5 @@
 import { ValidationError } from "class-validator";
-import BadRequestException from "exceptions/BadRequestException";
+import BaseHttpException from "exceptions/BaseHttpException";
 
 function handleExceptinsArray(errors: unknown[]) {
   function handleError(error: unknown) {
@@ -39,23 +39,27 @@ function isValidationErrorArray(error: unknown) {
   return Array.isArray(error) && error.every(isValidationError);
 }
 
-function isBadRequestError(error: unknown) {
-  return error instanceof BadRequestException;
+function isHttpException(error: unknown) {
+  return error instanceof BaseHttpException;
 }
 
-function isBadRequestExceptionArray(error: unknown) {
-  return Array.isArray(error) && error.every(isBadRequestError);
+function isHttpExceptionArray(error: unknown) {
+  return Array.isArray(error) && error.every(isHttpException);
 }
 
 function handleStatusCode(error: unknown): number {
   const isValidationException =
     isValidationErrorArray(error) || isValidationError(error);
-  const isBadRequest =
-    isBadRequestError(error) || isBadRequestExceptionArray(error);
+  const isHttpExceptionError =
+    isHttpException(error) || isHttpExceptionArray(error);
 
-  if (isValidationException || isBadRequest) {
+  if (isValidationException) {
     return 400;
   }
+  if (isHttpExceptionError) {
+    return isHttpExceptionArray(error) ? error.at(0).status : error.status;
+  }
+
   return 500;
 }
 
