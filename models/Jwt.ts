@@ -8,8 +8,15 @@ function sign(payload: object, options: SignOptions = {}): string {
   return token;
 }
 
+function decode(token: string) {
+  const decoded = jwt.decode(token);
+
+  return decoded;
+}
+
 const Jwt = {
   sign,
+  decode,
 };
 
 export default Jwt;
