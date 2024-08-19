@@ -15,21 +15,36 @@ async function seedUser(db: DatabaseInstance, customInfo: Partial<User> = {}) {
     password: faker.internet.password(),
     ...customInfo,
   };
-  const newUser = await db.insert(users).values(user).returning();
+  const [newUser] = await db.insert(users).values(user).returning();
 
   return newUser;
 }
 
+async function seedSkills(db: DatabaseInstance, userId: number) {
+  const skill = {
+    name: faker.person.firstName(),
+    slug: faker.lorem.slug(),
+    userId,
+  };
+  const [newSkill] = await db.insert(schema.skills).values(skill).returning();
+
+  return newSkill;
+}
+
 async function seed() {
   const db = await database.getNewDb();
-  await seedUser(db, { email: "arquiteto@email.com" });
+  seedUser(db, { email: "arquiteto@email.com" }).catch(() => null);
+
   for (let index = 0; index <= 5; index++) {
-    await seedUser(db);
+    const user = await seedUser(db);
+    await seedSkills(db, user.id);
   }
 }
 
 const seeder = {
   seed,
+  seedSkills,
+  seedUser,
 };
 
 export default seeder;
