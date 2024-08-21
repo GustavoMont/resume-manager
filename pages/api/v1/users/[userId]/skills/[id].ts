@@ -60,6 +60,22 @@ async function put(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-router.use(jwtStrategy, guard).get(get).put(put);
+async function deleteSkill(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const { id: idParam, userId: userIdParam } = req.query;
+    const userId = +userIdParam;
+    const id = +idParam;
+
+    await Skills.deleteSkill({ id, userId });
+
+    return res.status(204).end();
+  } catch (error) {
+    const statusCode = exceptionHandler.handleStatusCode(error);
+    const errorResponse = exceptionHandler.handleException(error);
+    return res.status(statusCode).json(errorResponse);
+  }
+}
+
+router.use(jwtStrategy, guard).get(get).put(put).delete(deleteSkill);
 
 export default router.handler();
