@@ -96,11 +96,18 @@ async function getSkill({ id, userId }: GetSkillParam) {
   return skill;
 }
 
+async function deleteSkill(param: GetSkillParam) {
+  const skill = await getSkill(param);
+  const db = await database.getNewDb();
+  await db.delete(skills).where(eq(skills.id, skill.id));
+}
+
 const Skills = {
   getUserSkills,
   getSkill,
   createSkill,
   updateSkill,
+  deleteSkill,
 };
 
 export default Skills;
