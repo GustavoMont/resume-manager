@@ -1,5 +1,4 @@
 import { and, eq } from "drizzle-orm";
-import CreateSkillDto from "dtos/skills/CreateSkill.dto";
 import BadRequestException from "exceptions/BadRequestException";
 import NotfFoundException from "exceptions/NotFoundException";
 import database from "infra/database/database";
@@ -38,17 +37,13 @@ async function isNewSkill(userId: number, slug: string) {
   }
 }
 
-async function createSkill(userId: number, payload: CreateSkillDto) {
-  const slug = slugfier.generateSlug(`${payload.name}-${userId}`);
-  await isNewSkill(userId, slug);
+async function createSkill(userId: number, payload: Skill) {
+  await handleSkillSlug(payload, userId);
+  payload.userId = userId;
 
   const db = await database.getNewDb();
-  const newSkill = {
-    ...payload,
-    slug,
-    userId,
-  };
-  const [skill] = await db.insert(skills).values(newSkill).returning();
+
+  const [skill] = await db.insert(skills).values(payload).returning();
 
   return skill;
 }
