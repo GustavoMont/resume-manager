@@ -88,5 +88,7 @@ test("should return 400 for skill already added", async () => {
   expect(status).toBe(400);
   expect(Array.isArray(errors)).toBeTruthy();
   const messages: string[] = errors.map(({ message }) => message);
-  expect(messages.includes("Habilidade já adicionada ao usuário")).toBeTruthy();
+  expect(
+    messages.includes("Já existe uma habilidade com o mesmo nome"),
+  ).toBeTruthy();
 });
