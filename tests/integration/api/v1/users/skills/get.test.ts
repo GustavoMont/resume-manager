@@ -124,7 +124,7 @@ describe("retrieve one skill", () => {
     expect(Array.isArray(errors)).toBeTruthy();
     const [error] = errors;
     expect(error).toStrictEqual({
-      message: "Skill was not found",
+      message: "Habilidade não encontrada",
     });
   });
   test("should return 404 when skills is from another user", async () => {
@@ -147,7 +147,7 @@ describe("retrieve one skill", () => {
     expect(Array.isArray(errors)).toBeTruthy();
     const [error] = errors;
     expect(error).toStrictEqual({
-      message: "Skill was not found",
+      message: "Habilidade não encontrada",
     });
   });
   test("should retrieve user skill", async () => {

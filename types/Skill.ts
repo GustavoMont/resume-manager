@@ -4,6 +4,7 @@ type Skill = {
   slug: string;
   createdAt: string;
   updatedAt: string;
+  userId: number;
 };
 
 export default Skill;
