@@ -2,6 +2,7 @@ import { plainToInstance } from "class-transformer";
 import { validateOrReject } from "class-validator";
 import routeConfig from "config/api/route-config";
 import CreateSkillDto from "dtos/skills/CreateSkill.dto";
+import authorGuard from "guards/author-guard";
 import { camelizeKeys, decamelizeKeys } from "humps";
 import Authentication from "models/Authentication";
 import Skills from "models/Skills";
@@ -13,18 +14,8 @@ export const config = routeConfig.DEFAULT_ROUT_CONFIG;
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-const getAuthorId = async (req: NextApiRequest) => {
-  const { userId } = req.query;
-
-  if (typeof userId === "string") {
-    return +userId;
-  }
-
-  return NaN;
-};
-
 const jwtStrategy = Authentication.getJwtStrategy();
-const guard = Authentication.getAuthorGuard(getAuthorId);
+const userIdParamGuard = authorGuard.userIdParamGuard;
 
 async function get(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -76,6 +67,6 @@ async function deleteSkill(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-router.use(jwtStrategy, guard).get(get).put(put).delete(deleteSkill);
+router.use(jwtStrategy, userIdParamGuard).get(get).put(put).delete(deleteSkill);
 
 export default router.handler();
