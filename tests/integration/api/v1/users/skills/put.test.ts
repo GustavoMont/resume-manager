@@ -1,52 +1,16 @@
-import { faker } from "@faker-js/faker";
-import { plainToInstance } from "class-transformer";
-import { signup } from "data/services/auth.services";
-import CreateSkillDto from "dtos/skills/CreateSkill.dto";
-import CreateUserDto from "dtos/users/CreateUser.dto";
-import { camelizeKeys, Decamelized } from "humps";
-import Jwt from "models/Jwt";
-import Skill from "types/Skill";
 import requester from "utils/requester";
 import slugfier from "utils/slugfy";
+import authTestUtils from "utils/tests/auth";
+import skillsTestUtils from "utils/tests/skills";
 
 const api = requester.createTestRequester();
-
-async function createUser() {
-  const payload = {
-    email: faker.internet.email(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    password: faker.internet.password({ length: 10, prefix: "9" }),
-  };
-  const { access } = await signup(plainToInstance(CreateUserDto, payload));
-  return access;
-}
-
-async function crateSkill(
-  access: string,
-  payload: Partial<CreateSkillDto> = {},
-) {
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
-
-  const { data: skill } = await api.post<Decamelized<Skill>>(
-    `/users/${userId}/skills`,
-    {
-      name: "habilidade",
-      ...payload,
-    },
-    { headers: { Authorization: `Bearer ${access}` } },
-  );
-
-  return camelizeKeys<Decamelized<Skill>>(skill);
-}
 
 test("should return 401", async () => {
   const { status } = await api.put(`/users/1/skills/1`, {});
   expect(status).toBe(401);
 });
 test("should return 403", async () => {
-  const access = await createUser();
+  const access = await authTestUtils.createUser();
   const { status } = await api.put(
     `/users/1/skills/1`,
     {},
@@ -55,9 +19,8 @@ test("should return 403", async () => {
   expect(status).toBe(403);
 });
 test("should return 404 when skill is not from user", async () => {
-  const access = await createUser();
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const userId = authTestUtils.getUserIdFromToken(access);
   const { status, data: errors } = await api.put(
     `/users/${userId}/skills/1`,
     { name: "habilidade" },
@@ -69,10 +32,9 @@ test("should return 404 when skill is not from user", async () => {
   expect(error.message).toBe("Habilidade não encontrada");
 });
 test("should return 400 when send wrong name", async () => {
-  const access = await createUser();
-  const { id } = await crateSkill(access);
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const { id } = await skillsTestUtils.createSkill(access);
+  const userId = authTestUtils.getUserIdFromToken(access);
 
   const { status, data: errors } = await api.put(
     `/users/${userId}/skills/${id}`,
@@ -90,12 +52,11 @@ test("should return 400 when send wrong name", async () => {
   ).toBeTruthy();
 });
 test("should return 400 when slug match with another user skill", async () => {
-  const access = await createUser();
+  const access = await authTestUtils.createUser();
   const payload = { name: "Habilijhonson" };
-  await crateSkill(access, payload);
-  const { id } = await crateSkill(access);
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  await skillsTestUtils.createSkill(access, payload);
+  const { id } = await skillsTestUtils.createSkill(access);
+  const userId = authTestUtils.getUserIdFromToken(access);
 
   const { status, data: errors } = await api.put(
     `/users/${userId}/skills/${id}`,
@@ -111,10 +72,9 @@ test("should return 400 when slug match with another user skill", async () => {
 });
 
 test("should not update user_id field", async () => {
-  const access = await createUser();
-  const { id, name } = await crateSkill(access);
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const { id, name } = await skillsTestUtils.createSkill(access);
+  const userId = authTestUtils.getUserIdFromToken(access);
 
   const payload = { user_id: 2 };
   const { status, data } = await api.put(
@@ -131,11 +91,10 @@ test("should not update user_id field", async () => {
 });
 
 test("should return 200", async () => {
-  const access = await createUser();
+  const access = await authTestUtils.createUser();
 
-  const { id, createdAt } = await crateSkill(access);
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const { id, createdAt } = await skillsTestUtils.createSkill(access);
+  const userId = authTestUtils.getUserIdFromToken(access);
 
   const payload = { name: "Nova" };
 

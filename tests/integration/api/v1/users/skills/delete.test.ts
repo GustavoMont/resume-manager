@@ -1,53 +1,23 @@
-import { faker } from "@faker-js/faker";
-import { plainToInstance } from "class-transformer";
-import { signup } from "data/services/auth.services";
-import CreateUserDto from "dtos/users/CreateUser.dto";
-import { camelizeKeys, Decamelized } from "humps";
-import Jwt from "models/Jwt";
-import Skill from "types/Skill";
 import requester from "utils/requester";
+import authTestUtils from "utils/tests/auth";
+import skillsTestUtils from "utils/tests/skills";
 
 const api = requester.createTestRequester();
-
-async function createUser() {
-  const signupBody = {
-    email: faker.internet.email(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    password: faker.internet.password({ length: 10, prefix: "9" }),
-  };
-  const { access } = await signup(plainToInstance(CreateUserDto, signupBody));
-  return access;
-}
-
-async function createSkill(access: string) {
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
-
-  const { data: skill } = await api.post<Decamelized<Skill>>(
-    `/users/${userId}/skills`,
-    { name: "habilidade" },
-    { headers: { Authorization: `Bearer ${access}` } },
-  );
-
-  return camelizeKeys<Decamelized<Skill>>(skill);
-}
 
 test("should return 401", async () => {
   const { status } = await api.delete(`/users/1/skills/1`);
   expect(status).toBe(401);
 });
 test("should return 403", async () => {
-  const access = await createUser();
+  const access = await authTestUtils.createUser();
   const { status } = await api.delete(`/users/1/skills/1`, {
     headers: { Authorization: `Bearer ${access}` },
   });
   expect(status).toBe(403);
 });
 test("should return 404 when try to delete skill from another user", async () => {
-  const access = await createUser();
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const userId = authTestUtils.getUserIdFromToken(access);
   const { status, data: errors } = await api.delete(
     `/users/${userId}/skills/1`,
     {
@@ -60,9 +30,8 @@ test("should return 404 when try to delete skill from another user", async () =>
   expect(error.message).toBe("Habilidade não encontrada");
 });
 test("should return 404 skill does not exist", async () => {
-  const access = await createUser();
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const userId = authTestUtils.getUserIdFromToken(access);
   const { status, data: errors } = await api.delete(
     `/users/${userId}/skills/199999999`,
     {
@@ -75,10 +44,9 @@ test("should return 404 skill does not exist", async () => {
   expect(error.message).toBe("Habilidade não encontrada");
 });
 test("should return 204", async () => {
-  const access = await createUser();
-  const { id } = await createSkill(access);
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const { id } = await skillsTestUtils.createSkill(access);
+  const userId = authTestUtils.getUserIdFromToken(access);
   const { status } = await api.delete(`/users/${userId}/skills/${id}`, {
     headers: { Authorization: `Bearer ${access}` },
   });

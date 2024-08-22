@@ -1,29 +1,14 @@
-import { faker } from "@faker-js/faker";
-import { plainToInstance } from "class-transformer";
-import { signup } from "data/services/auth.services";
-import CreateUserDto from "dtos/users/CreateUser.dto";
-import Jwt from "models/Jwt";
 import requester from "utils/requester";
+import authTestUtils from "utils/tests/auth";
 
 const api = requester.createTestRequester();
-
-async function createUser() {
-  const payload = {
-    email: faker.internet.email(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    password: faker.internet.password({ length: 10, prefix: "9" }),
-  };
-  const { access } = await signup(plainToInstance(CreateUserDto, payload));
-  return access;
-}
 
 test("should return 401", async () => {
   const { status } = await api.post(`/users/1/skills`);
   expect(status).toBe(401);
 });
 test("should return 403 to create skills for another user", async () => {
-  const access = await createUser();
+  const access = await authTestUtils.createUser();
   const { status } = await api.post(
     `/users/1/skills`,
     {},
@@ -32,9 +17,9 @@ test("should return 403 to create skills for another user", async () => {
   expect(status).toBe(403);
 });
 test("should return 400", async () => {
-  const access = await createUser();
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const userId = authTestUtils.getUserIdFromToken(access);
+
   const payload = {
     name: "a2",
   };
@@ -55,9 +40,8 @@ test("should return 400", async () => {
 });
 
 test("should return 201", async () => {
-  const access = await createUser();
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const userId = authTestUtils.getUserIdFromToken(access);
   const payload = {
     name: "habilidade",
   };
@@ -71,9 +55,8 @@ test("should return 201", async () => {
 });
 
 test("should return 400 for skill already added", async () => {
-  const access = await createUser();
-  const { sub } = Jwt.decode(access);
-  const userId = sub ? +sub : 0;
+  const access = await authTestUtils.createUser();
+  const userId = authTestUtils.getUserIdFromToken(access);
   const payload = {
     name: "habilidade",
   };
