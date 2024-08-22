@@ -1,31 +1,22 @@
 import { faker } from "@faker-js/faker";
-import { UserResponseDto } from "dtos/users/UserResponse.dto";
 import requester from "utils/requester";
+import authTestUtils from "utils/tests/auth";
 
 const api = requester.createTestRequester();
-
-async function createUser() {
-  const signupBody = {
-    email: faker.internet.email(),
-    password: faker.internet.password(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-  };
-  await api.post<UserResponseDto>("/auth/signup", signupBody);
-  return signupBody;
-}
 
 test("should return 401 when email is wrong", async () => {
   const loginBody = {
     email: "email@email.com",
     password: faker.internet.password(),
   };
+  await authTestUtils.createUser({ password: loginBody.password });
   const { status } = await api.post("/auth/login", loginBody);
   expect(status).toBe(401);
 });
 
 test("should return 401 when password is wrong", async () => {
-  const { email } = await createUser();
+  const email = faker.internet.email();
+  await authTestUtils.createUser({ email });
   const loginBody = {
     email,
     password: faker.internet.password(),
@@ -35,8 +26,11 @@ test("should return 401 when password is wrong", async () => {
 });
 
 test("should return 200 and access token", async () => {
-  const { email, password } = await createUser();
-  const loginBody = { email, password };
+  const loginBody = {
+    email: faker.internet.email(),
+    password: faker.internet.password({ length: 10, prefix: "0" }),
+  };
+  await authTestUtils.createUser(loginBody);
   const { status, data } = await api.post("/auth/login", loginBody);
 
   expect(status).toBe(200);

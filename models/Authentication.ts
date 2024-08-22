@@ -29,7 +29,7 @@ function getJwtStrategy() {
   return passport.authenticate("jwt", PASSPORT_OPTIONS);
 }
 
-type GetResourceAuthorIdFn = (req: NextApiRequest) => Promise<number>;
+type GetResourceAuthorIdFn = (req: NextApiRequest) => Promise<number> | number;
 
 function getAuthorGuard(getResourceAuthorId: GetResourceAuthorIdFn) {
   async function routeHandler(

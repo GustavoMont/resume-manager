@@ -10,7 +10,7 @@ describe("failure cases", () => {
       email: "arquiteto@email.com",
       first_name: "Primeiro",
       last_name: "Nome",
-      password: faker.internet.password({ length: 10, prefix: "10" }),
+      password: faker.internet.password({ length: 10, prefix: "9" }),
     };
     const { status, data: errors } = await api.post("/auth/signup", signupBody);
     expect(status).toBe(400);
