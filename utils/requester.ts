@@ -16,6 +16,7 @@ const createRequester = () => {
 const createTestRequester = () => {
   const api = axios.create({
     ...DFEAULT_CONFIG,
+    timeout: 20_000,
     validateStatus,
   });
   function validateStatus(status: number) {
