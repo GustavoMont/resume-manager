@@ -26,7 +26,17 @@ function getLocalStrategy() {
 
 function getJwtStrategy() {
   passport.use(jwtStrategy);
-  return passport.authenticate("jwt", PASSPORT_OPTIONS);
+  async function routeHandler(
+    req: NextApiRequest,
+    res: NextApiResponse,
+    next: NextHandler,
+  ) {
+    const auth = passport.authenticate("jwt", PASSPORT_OPTIONS);
+    const authPromise = new Promise((r) => auth(req, res, r));
+    await authPromise;
+    await next();
+  }
+  return routeHandler;
 }
 
 type GetResourceAuthorIdFn = (req: NextApiRequest) => Promise<number> | number;

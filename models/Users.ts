@@ -6,6 +6,8 @@ import Password from "./Password";
 import BadRequestException from "exceptions/BadRequestException";
 import { plainToInstance } from "class-transformer";
 import { UserResponseDto } from "dtos/users/UserResponse.dto";
+import { validateOrReject } from "class-validator";
+import { UpdateUserDto } from "dtos/users/UpdateUser.dto";
 
 async function getAllUsers() {
   const db = await database.getNewDb();
@@ -40,6 +42,17 @@ async function isNewUser(email: string) {
   }
 }
 
+async function updateUser(updatePayload: Partial<User>) {
+  updatePayload = plainToInstance(UpdateUserDto, updatePayload);
+  await validateOrReject(updatePayload);
+
+  updatePayload.updatedAt = new Date().toISOString();
+  const db = await database.getNewDb();
+  const [user] = await db.update(users).set(updatePayload).returning();
+
+  return plainToInstance(UserResponseDto, user);
+}
+
 async function createUser(newUser: User) {
   await isNewUser(newUser.email);
   await hashUserPassword(newUser);
@@ -49,6 +62,12 @@ async function createUser(newUser: User) {
   return user;
 }
 
-const UserModel = { getAllUsers, createUser, getUserByEmail, getUserById };
+const UserModel = {
+  getAllUsers,
+  createUser,
+  getUserByEmail,
+  getUserById,
+  updateUser,
+};
 
 export default UserModel;
