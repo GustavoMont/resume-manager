@@ -1,9 +1,10 @@
 import routeConfig from "config/api/route-config";
 import NotfFoundException from "exceptions/NotFoundException";
-import { decamelizeKeys } from "humps";
+import { camelizeKeys, decamelizeKeys } from "humps";
 import Authentication from "models/Authentication";
+import UserModel from "models/Users";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createRouter } from "next-connect";
+import { createRouter, NextHandler } from "next-connect";
 import exceptionHandler from "utils/exceptions-handler";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -18,18 +19,41 @@ async function getUserId(req: NextApiRequest) {
   return Number(userId);
 }
 
-router.use(Authentication.getJwtStrategy()).get(async (req, res) => {
-  try {
-    const userIdParam = await getUserId(req);
-    if (userIdParam !== req.user.id) {
-      throw new NotfFoundException("Usuário", "M");
+async function checkUserPermission(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  next: NextHandler,
+) {
+  const userIdParam = await getUserId(req);
+  if (userIdParam !== req.user.id) {
+    throw new NotfFoundException("Usuário", "M");
+  }
+  await next();
+}
+
+async function updateUser(req: NextApiRequest, res: NextApiResponse) {
+  const camelizedBody = camelizeKeys(req.body);
+  const updatedUser = await UserModel.updateUser(camelizedBody);
+  return res.status(200).json(decamelizeKeys(updatedUser));
+}
+
+router
+  .use(Authentication.getJwtStrategy(), checkUserPermission)
+  .patch(updateUser)
+  .get(async (req, res) => {
+    try {
+      return res.status(200).json(decamelizeKeys(req.user));
+    } catch (error) {
+      const statusCode = exceptionHandler.handleStatusCode(error);
+      const response = exceptionHandler.handleException(error);
+      return res.status(statusCode).json(response);
     }
-    return res.status(200).json(decamelizeKeys(req.user));
-  } catch (error) {
+  });
+
+export default router.handler({
+  onError(error, req, res) {
     const statusCode = exceptionHandler.handleStatusCode(error);
     const response = exceptionHandler.handleException(error);
     return res.status(statusCode).json(response);
-  }
+  },
 });
-
-export default router.handler();
