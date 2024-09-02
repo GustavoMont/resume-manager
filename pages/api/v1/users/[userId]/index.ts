@@ -37,9 +37,15 @@ async function updateUser(req: NextApiRequest, res: NextApiResponse) {
   return res.status(200).json(decamelizeKeys(updatedUser));
 }
 
+async function deleteUser(req: NextApiRequest, res: NextApiResponse) {
+  await UserModel.deleteUser(req.user.id);
+  return res.status(204).end();
+}
+
 router
   .use(Authentication.getJwtStrategy(), checkUserPermission)
   .patch(updateUser)
+  .delete(deleteUser)
   .get(async (req, res) => {
     try {
       return res.status(200).json(decamelizeKeys(req.user));
