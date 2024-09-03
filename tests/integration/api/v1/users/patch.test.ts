@@ -77,6 +77,8 @@ test("should return 200 when valid payload", async () => {
 test("should allow update only one field", async () => {
   const accessToken = await authTestUtils.createUser();
   const userId = authTestUtils.getUserIdFromToken(accessToken);
+  const accessToken2 = await authTestUtils.createUser();
+  const userId2 = authTestUtils.getUserIdFromToken(accessToken2);
   const payload = {
     first_name: "Topildo",
   };
@@ -88,5 +90,11 @@ test("should allow update only one field", async () => {
   const createdAtTime = new Date(user.created_at).getTime();
   const updatedAtTime = new Date(user.updated_at).getTime();
   expect(updatedAtTime).toBeGreaterThan(createdAtTime);
+  expect(user.id).toBe(userId);
   expect(user.password).not.toBeDefined();
+  const { data: anotherUser } = await api.get(`/users/${userId2}`, {
+    headers: { Authorization: `Bearer ${accessToken2}` },
+  });
+
+  expect(anotherUser.first_name).not.toBe(user.first_name);
 });
