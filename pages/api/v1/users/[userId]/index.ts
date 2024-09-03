@@ -33,7 +33,7 @@ async function checkUserPermission(
 
 async function updateUser(req: NextApiRequest, res: NextApiResponse) {
   const camelizedBody = camelizeKeys(req.body);
-  const updatedUser = await UserModel.updateUser(camelizedBody);
+  const updatedUser = await UserModel.updateUser(req.user.id, camelizedBody);
   return res.status(200).json(decamelizeKeys(updatedUser));
 }
 

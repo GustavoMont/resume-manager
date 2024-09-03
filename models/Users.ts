@@ -42,13 +42,17 @@ async function isNewUser(email: string) {
   }
 }
 
-async function updateUser(updatePayload: Partial<User>) {
+async function updateUser(userId: number, updatePayload: Partial<User>) {
   updatePayload = plainToInstance(UpdateUserDto, updatePayload);
   await validateOrReject(updatePayload);
 
   updatePayload.updatedAt = new Date().toISOString();
   const db = await database.getNewDb();
-  const [user] = await db.update(users).set(updatePayload).returning();
+  const [user] = await db
+    .update(users)
+    .set(updatePayload)
+    .where(eq(users.id, userId))
+    .returning();
 
   return plainToInstance(UserResponseDto, user);
 }
