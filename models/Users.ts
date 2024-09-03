@@ -66,12 +66,18 @@ async function createUser(newUser: User) {
   return user;
 }
 
+async function deleteUser(userId: number) {
+  const db = await database.getNewDb();
+  await db.delete(users).where(eq(users.id, userId));
+}
+
 const UserModel = {
   getAllUsers,
   createUser,
   getUserByEmail,
   getUserById,
   updateUser,
+  deleteUser,
 };
 
 export default UserModel;
