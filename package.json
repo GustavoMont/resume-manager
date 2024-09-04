@@ -19,7 +19,7 @@
     "lint:style:check": "prettier --check .",
     "lint:style:fix": "prettier --write .",
     "lint:quality:check": "next lint --dir .",
-    "secret:check": "secretlint \"**/*\"",
+    "lint:secret:check": "secretlint \"**/*\"",
     "prepare": "husky"
   },
   "keywords": [],
