@@ -4,10 +4,12 @@
   "description": "It's a project to easily manage resumé for different jobs",
   "main": "index.js",
   "scripts": {
-    "commit": "cz",
     "predev": "npm run services:up && npm run wait-for-db && npm run migrations:up && npm run db:seed",
-    "db:seed": "tsx infra/scripts/seeds.ts",
     "dev": "next dev",
+    "test": "npm run services:up && concurrently \"next dev\" \"jest --runInBand --verbose --detectOpenHandles\" -n next,jest --hide next -k -s command-jest",
+    "test:watch": "jest --watchAll --runInBand --verbose",
+    "commit": "cz",
+    "db:seed": "tsx infra/scripts/seeds.ts",
     "lint:style:check": "prettier --check .",
     "lint:style:fix": "prettier --write .",
     "lint:quality:check": "next lint --dir .",
@@ -16,8 +18,6 @@
     "services:up": "docker compose -f infra/compose.yaml up -d",
     "services:down": "docker compose -f infra/compose.yaml down",
     "secret:check": "secretlint \"**/*\"",
-    "test": "npm run services:up && concurrently \"next dev\" \"jest --runInBand --verbose --detectOpenHandles\" -n next,jest --hide next -k -s command-jest",
-    "test:watch": "jest --watchAll --runInBand --verbose",
     "wait-for-db": "tsx infra/scripts/wait-for-db.ts",
     "prepare": "husky"
   },
