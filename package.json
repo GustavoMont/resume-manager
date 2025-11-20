@@ -2,8 +2,14 @@
   "name": "resume-manager",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "next dev"
+    "dev": "next dev",
+    "lint:eslint:check": "eslint .",
+    "lint:eslint:fix": "eslint . --fix",
+    "lint:prettier:check": "prettier . --check",
+    "lint:prettier:fix": "prettier . --write",
+    "commit": "cz"
   },
   "keywords": [],
   "author": "",
@@ -13,8 +19,24 @@
     "next": "^16.0.3"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@eslint/js": "^9.39.1",
     "@types/node": "24.10.1",
     "@types/react": "19.2.6",
-    "typescript": "^5.9.3"
+    "commitizen": "^4.3.1",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "jiti": "^2.6.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.47.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
