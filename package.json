@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev"
+    "dev": "next dev",
+    "lint:eslint:check": "eslint .",
+    "lint:eslint:fix": "eslint . --fix"
   },
   "keywords": [],
   "author": "",
@@ -13,8 +15,13 @@
     "next": "^16.0.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
     "@types/node": "24.10.1",
     "@types/react": "19.2.6",
-    "typescript": "^5.9.3"
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
+    "jiti": "^2.6.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.47.0"
   }
 }
